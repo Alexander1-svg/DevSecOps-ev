@@ -1,15 +1,20 @@
-# VERSION VULNERABLE (antes de la correccion)
-# Problemas: imagen antigua, corre como root, servidor de desarrollo con debug activado
-FROM python:3.9-slim
+# VERSION CORREGIDA
+# - Imagen base actual y liviana
+# - Usuario sin privilegios (no root)
+# - Servidor de produccion gunicorn, sin modo debug
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY app.py .
+RUN pip install --no-cache-dir -r requirements.txt \
+    && useradd --create-home --uid 10001 appuser
 
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=development
-ENV FLASK_DEBUG=1
+COPY --chown=appuser:appuser app.py .
+USER appuser
 
 EXPOSE 5000
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/health')" || exit 1
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "4", "--access-logfile", "-", "app:app"]
