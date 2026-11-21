@@ -1,0 +1,21 @@
+# Gestion automatica de dependencias: Dependabot revisa cada semana
+# las dependencias de Python y la imagen base de Docker, y abre
+# Pull Requests con las actualizaciones de seguridad.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencias"
+      - "seguridad"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencias"
+      - "docker"

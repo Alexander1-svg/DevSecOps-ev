@@ -1,0 +1,9 @@
+.venv
+.git
+reports
+tests
+.scannerwork
+.pytest_cache
+__pycache__
+Jenkinsfile
+sonar-project.properties
