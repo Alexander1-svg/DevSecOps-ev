@@ -2,7 +2,7 @@
 # - Imagen base actual y liviana
 # - Usuario sin privilegios (no root)
 # - Servidor de produccion gunicorn, sin modo debug
-FROM python:3.12-slim
+FROM python:3.15-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
