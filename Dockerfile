@@ -12,7 +12,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     && useradd --create-home --uid 10001 appuser
 
-COPY --chown=appuser:appuser app.py .
+# app.py queda con dueno root y solo lectura para appuser
+COPY app.py .
 USER appuser
 
 EXPOSE 5000

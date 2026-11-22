@@ -5,18 +5,24 @@ Correcciones aplicadas respecto a la version vulnerable:
   2. Entradas maliciosas se rechazan con HTTP 400 y se registran (log + metrica).
   3. Modo debug desactivado (el depurador de Werkzeug permite ejecucion remota de codigo).
   4. Cabeceras HTTP de seguridad (CSP, X-Frame-Options, X-Content-Type-Options, etc.).
-  5. Metricas Prometheus en /metrics para la monitorizacion con Grafana.
+  5. Proteccion CSRF global con Flask-WTF (CSRFProtect).
+  6. Metricas Prometheus en /metrics para la monitorizacion con Grafana.
 """
 import logging
+import os
 import re
+import secrets
 import time
 
 from flask import Flask, Response, g, request
+from flask_wtf.csrf import CSRFProtect
 from markupsafe import escape
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Histogram, generate_latest
 
 app = Flask(__name__)
 app.config["DEBUG"] = False
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+csrf = CSRFProtect(app)
 
 logging.basicConfig(
     level=logging.INFO,
